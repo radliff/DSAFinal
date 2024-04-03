@@ -63,8 +63,16 @@ def getPlaylists():
     if not SP_OAUTH.validate_token(CACHE_HANDLER.get_cached_token()):
         authUrl = SP_OAUTH.get_authorize_url()
         return redirect(authUrl)
-    userPlaylist= sp.playlist('66ZndsAIRfhOqzdv45vnY9', fields= 'name', additional_types=('track',))
-    return f'<p> {userPlaylist} </p>'
+    playlistID = "66ZndsAIRfhOqzdv45vnY9"
+    userPlaylist = sp.playlist(playlistID)
+    playlist_tracks = sp.playlist_items(playlistID, additional_types='track')
+
+    # iterates over every track in playlist
+    for track in playlist_tracks['items']:
+        track_name = track['track']['name']
+        print(track_name)
+
+
     ''' I need a way to read the playlist ID from the URL, 
     that way, the user can just copy & paste'''
 
