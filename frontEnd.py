@@ -60,17 +60,22 @@ def callback():
 
 @app.route('/playlists')
 def getPlaylists():
+    # redirect to authorization url if token is not validated
     if not SP_OAUTH.validate_token(CACHE_HANDLER.get_cached_token()):
         authUrl = SP_OAUTH.get_authorize_url()
         return redirect(authUrl)
-    playlistID = "66ZndsAIRfhOqzdv45vnY9"
-    userPlaylist = sp.playlist(playlistID)
+    playlistID = "4h0eEGBZevv0ZpSbmvP3qa"
     playlist_tracks = sp.playlist_items(playlistID, additional_types='track')
 
-    # iterates over every track in playlist
+    trackFeatures = []
+    # iterates over every track in playlist & returns name
     for track in playlist_tracks['items']:
-        track_name = track['track']['name']
-        print(track_name)
+        track_ID = track['track']['id']
+        feature = sp.audio_features(track_ID)
+
+        trackFeatures.append(feature)
+    print(trackFeatures)
+    return '<h1> Track Features </h1>'
 
 
     ''' I need a way to read the playlist ID from the URL, 
