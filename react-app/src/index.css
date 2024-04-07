@@ -1,0 +1,90 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  box-shadow: none;
+  color: black;
+  
+}
+
+.container{
+  padding: 30px;
+}
+
+
+.App {
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  margin: 0 auto;
+  height: 100vh;
+  background-color: #00a2ff;
+
+}
+
+
+.PCM-logo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24vh;
+  padding: 16px;
+}
+
+.PCM{
+  color: black;
+  height:  8vh;
+  font-size: min(7vw, 100px);
+  text-align: left;
+  line-height: 8vh;
+  letter-spacing: -2px;
+
+}
+
+.user-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.prompt-text{
+  margin: 1.5em;
+  text-align: center;
+  width: 80%;
+  line-height: 1.5;
+}
+
+
+
+.prompt-text {
+  margin-bottom: 20px;
+}
+
+.link-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.link-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px; 
+  margin-bottom: 10px;
+  width: 350px;
+}
+
+.link-form .formButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px; 
+  background-color: #4CAF50; 
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease; 
+  width: 150px;
+}
+
+.link-form .formButton:hover {
+  background-color: #45a049; 
+}
