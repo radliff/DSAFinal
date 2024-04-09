@@ -89,3 +89,49 @@
 .link-form .formButton:hover {
   background-color: #45a049; 
 }
+
+/* chris page */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #00a2ff; /* Set the background color to blue */
+}
+.container-home {
+  text-align: center; 
+  padding-top: 50px;
+}
+
+.title {
+  color: black;
+  font-size: 3rem; 
+  margin-bottom: 30px;
+}
+
+.card {
+  background-color: white;
+  margin: 20px auto; 
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 80%; 
+  max-width: 600px; 
+}
+
+.bold {
+  font-weight: bold; 
+}
+
+.button {
+  background-color: #1DB954;
+  color: black;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px; 
+}
