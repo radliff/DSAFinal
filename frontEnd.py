@@ -1,6 +1,5 @@
-import requests
 
-from flask import Flask, redirect, request, jsonify, session, url_for
+from flask import Flask, redirect, request, jsonify, session, url_for, render_template
 import requests
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -9,7 +8,7 @@ from spotipy.cache_handler import FlaskSessionCacheHandler
 import urllib.parse
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./react-app/build', static_url_path='/')
 
 app.secret_key = 'secretSpotifyKey'
 
@@ -40,7 +39,8 @@ sp = Spotify(auth_manager=SP_OAUTH)
 
 @app.route('/')
 def home():
-    return "This is supposed to return a specific playlist <a href='/login'>Login with Spotify</a>"
+    return app.send_static_file('index.html')
+
 
 @app.route('/login')
 def login():
@@ -61,21 +61,21 @@ def callback():
 @app.route('/playlists')
 def getPlaylists():
     # redirect to authorization url if token is not validated
-    if not SP_OAUTH.validate_token(CACHE_HANDLER.get_cached_token()):
-        authUrl = SP_OAUTH.get_authorize_url()
-        return redirect(authUrl)
-    playlistID = "4h0eEGBZevv0ZpSbmvP3qa"
-    playlist_tracks = sp.playlist_items(playlistID, additional_types='track')
+    # if not SP_OAUTH.validate_token(CACHE_HANDLER.get_cached_token()):
+    #     authUrl = SP_OAUTH.get_authorize_url()
+    #     return redirect(authUrl)
+    # playlistID = "4h0eEGBZevv0ZpSbmvP3qa"
+    # playlist_tracks = sp.playlist_items(playlistID, additional_types='track')
 
-    trackFeatures = []
-    # iterates over every track in playlist & returns name
-    for track in playlist_tracks['items']:
-        track_ID = track['track']['id']
-        feature = sp.audio_features(track_ID)
+    # trackFeatures = []
+    # # iterates over every track in playlist & returns name
+    # for track in playlist_tracks['items']:
+    #     track_ID = track['track']['id']
+    #     feature = sp.audio_features(track_ID)
 
-        trackFeatures.append(feature)
-    print(trackFeatures)
-    return '<h1> Track Features </h1>'
+    #     trackFeatures.append(feature)
+    # print(trackFeatures)
+    return render_template('playlists.html')
 
 
     ''' I need a way to read the playlist ID from the URL, 
