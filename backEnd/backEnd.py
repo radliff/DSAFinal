@@ -66,6 +66,15 @@ def getPlaylistName():
     playlist = sp.playlist(playlistID)
     playlist_name = playlist['name']
     return jsonify({'name': playlist_name})
+@app.route('/categories', methods=['POST'])
+def handle_category_click():
+    data = request.json
+    category_id = data['categoryId']
+    # Process the category_id as needed
+    # For example, you might look up the category by ID and do something with it
+
+    # Then you can return a success response or further data as needed
+    return jsonify({"message": "Category ID received successfully", "categoryId": category_id}), 200
 ''' 
 '''
 # @app.route('/playlists')
