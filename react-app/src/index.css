@@ -133,4 +133,45 @@ body {
   font-family: 'Times New Roman', Times, serif;
   padding: 12px 24px;
   cursor: pointer;
-  margin-top: 21px; }
+  margin-top: 20px; 
+}
+
+.categories-container {
+  background-color: #00a2ff; /* Set the background color to blue */
+  min-height: 100vh; /* Take full height of the viewport */
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Stack the title and categories list */
+  align-items: center;
+  justify-content: center;
+}
+
+.categories-title {
+  color: white;
+  font-size: 48px; /* Set a large font size for the title */
+  margin-bottom: 100px; /* Space between the title and the buttons */
+}
+
+.categories-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.category-button {
+  background-color: #00a2ff; /* Make the button background the same as the container */
+  border: 2px solid white; /* Give a white border to distinguish the buttons */
+  color: white; /* Set text color to white for contrast */
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 20px; /* This will make the buttons oval */
+  outline: none; /* Remove the default focus outline */
+  transition: transform 0.3s;
+  
+  /* Optional: Add some styles on hover to give a visual effect */
+  &:hover {
+    transform: scale(1.05); /* Slightly increase size on hover */
+  }
+}
