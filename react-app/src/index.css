@@ -79,15 +79,16 @@
   padding: 10px 20px;
   border: none;
   border-radius: 20px; 
-  background-color: #4CAF50; 
+  background-color: #00a2ff; 
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease; 
   width: 150px;
+  outline: none;
 }
 
 .link-form .formButton:hover {
-  background-color: #45a049; 
+  background-color: #00a2ff; 
 }
 
 /* chris page */
@@ -107,7 +108,7 @@ body {
 }
 
 .title {
-  color: black;
+  color: white;
   font-size: 3rem; 
   margin-bottom: 30px;
 }
@@ -117,7 +118,7 @@ body {
   margin: 20px auto; 
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgb(255, 255, 255);
   width: 80%; 
   max-width: 600px; 
 }
@@ -126,12 +127,10 @@ body {
   font-weight: bold; 
 }
 
-.button {
-  background-color: #1DB954;
-  color: black;
+.button-login {
+  background-color: #00a2ff;
+  color: white;
   font-family: 'Times New Roman', Times, serif;
   padding: 12px 24px;
-  border-radius: 4px;
   cursor: pointer;
-  margin-top: 20px; 
-}
+  margin-top: 20px; }

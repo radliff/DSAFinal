@@ -42,7 +42,7 @@ export const Home = () => {
                 <p>What comes next is where the magic happens. Harmony Hub employs two sophisticated algorithms to delve into the depths of your chosen category. These algorithms don't just skim the surface; they analyze compatibility scores, ensuring that the playlist you receive is a mirror to your soul's current calling.</p>
             </div> 
             
-            <button className="button" onClick={HandleLogin}>Login</button>
+            <button className="button-login" onClick={HandleLogin}>Login</button>
             
             {/* <Link to="/submitLink">
                 <button className="button">Get Started</button>
