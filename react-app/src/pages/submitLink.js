@@ -1,22 +1,32 @@
 import '../index.css';
 import React from "react";
 import { useState } from "react";
+import {useLocation} from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 
 export const SubmitLink = () => {
   const [playlistLink, setPlaylistLink] = useState('');
-  const [submittedLink, setSubmittedLink] = useState('');
+  const [playlistId, setPlaylistId] = useState('');
+  const [playlistName, setPlaylistName] = useState('');
+  const location = useLocation();
 
   const handleChange = (event) => {
-    setPlaylistLink(event.target.value);
-    
+      setPlaylistLink(event.target.value);
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    setSubmittedLink(playlistLink);
+      event.preventDefault();
+      // Extract playlist ID from the entered Spotify URL
+      const id = playlistLink.split('/').pop().split('?')[0];
+      setPlaylistId(id);
+      fetch(`http://localhost:5000/playlist?id=${id}`)
+          .then(response => response.json())
+          .then(data => setPlaylistName(data.name))
+          .catch(error => console.error('Error:', error));
   };
+
+
 
   
   return (
@@ -47,10 +57,10 @@ export const SubmitLink = () => {
                 Submit
               </button>
             </form>
-            {submittedLink && (
+            {SubmitLink && (
               <div>
                 <h2>Your Playlist Link:</h2>
-                <p>{submittedLink}</p>
+                <p>{playlistName}</p>
               </div>
             )}
           </div>

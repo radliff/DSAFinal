@@ -60,6 +60,12 @@ def submitLink():
     return app.send_static_file('index.html')
 
 
+@app.route('/playlist')
+def getPlaylistName():
+    playlistID = request.args.get('id')
+    playlist = sp.playlist(playlistID)
+    playlist_name = playlist['name']
+    return jsonify({'name': playlist_name})
 ''' 
 '''
 # @app.route('/playlists')
