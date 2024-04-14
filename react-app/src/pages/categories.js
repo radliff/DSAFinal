@@ -37,12 +37,24 @@ export const Categories = () => {
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
+=======
+import '../index.css'; 
+
+export const Categories = () => {
+  const categories = [
+    'made for you', 'pop', 'hip-hop', 'country',
+    'rock', 'r&b', 'metal', 'afro', 'indie', 'dance/electronic'
+  ];
+
+  const handleClick = (name) => {
+    console.log(`Category ${name} clicked`); 
   };
 
   return (
     <div className="categories-container">
       <h1 className="categories-title">Categories to choose from:</h1>
       <div className="categories-list">
+
         {categories.map((category) => (
           <button
             key={category.id}
@@ -50,6 +62,13 @@ export const Categories = () => {
             onClick={() => handleClick(category.id, category.name)}
           >
             {category.name}
+        {categories.map((category, index) => (
+          <button
+            key={index}
+            className="category-button"
+            onClick={() => handleClick(category)}
+          >
+            {category}
           </button>
         ))}
       </div>
