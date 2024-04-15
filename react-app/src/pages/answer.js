@@ -34,7 +34,7 @@ export const Answer = () => {
                 </div>
             :
             <div className="answer-page">
-                <div className="answer-page container">
+                <div className="answer-page-container">
                     <div className="compatibility">
                         <h1>Here is your compatability score !</h1>
                         <p>"score"</p>
@@ -54,11 +54,6 @@ export const Answer = () => {
                         </div>
                         
                     </div>
-
-                    
-                    
-                    
-
 
 
                 </div>
