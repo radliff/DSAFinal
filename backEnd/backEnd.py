@@ -93,34 +93,28 @@ def getScore(playlists):
     return playlist_scores[0]
 
 def calcScore(playlist_ID):
-    # get every track in playlist & iterate
-    playlist_tracks = sp.playlist_tracks(playlist_id=playlist_ID)['items']
-
     # this is for calculating avg
     count = sp.playlist_tracks(playlist_id=playlist_ID)['total']
 
     # defining all features
     acousticness = danceability = energy = loudness = speechiness = 0
-    loopCount = 0
-    for track in playlist_tracks:
-        # get audio features from each track
-        audio_features = sp.audio_features(tracks=track['track']['id'])[0]
-        acousticness += audio_features['acousticness']
-        danceability += audio_features['danceability']
-        energy += audio_features['energy']
-        loudness += audio_features['loudness']
-        speechiness += audio_features['speechiness']
-        loopCount += 1
-    print(loopCount)
-    # calculating averages for each feature
-    avg_acousticness = acousticness / count
-    avg_danceability = danceability / count
-    avg_energy = energy / count
-    avg_loudness = loudness / count
-    avg_speechiness = speechiness / count
-    # may add weights to this to fix inverse averages being the same, dont know
-    score = (avg_acousticness + avg_energy + avg_danceability + avg_speechiness + avg_loudness) / 5.0
-    return score
+    limit = 100
+    # playlist_tracks only grabs 100 tracks at a time, so we grab 1-100, 101-201, etc.
+    offset = 0
+    total_audio_features = []
+    # here, we minimze the # of api calls we need to make by grabbing 100 tracks at a time
+    while offset < count:
+        # this makes it so we do the page iteration described above
+        playlist_tracks = sp.playlist_tracks(playlist_id=playlist_ID, offset=offset)['items']
+        track_ids = []
+        # grab as many tracks as we can at once (100)
+        for track in playlist_tracks:
+            track_ids.append(track['track']['id'])
+        # we now grab ALL audio features for the 100 track IDs & append to the total audio features list
+        audio_features = sp.audio_features(track_ids)
+        total_audio_features.extend(audio_features)
+        # keep increasing the offset until it is equal to the total tracks
+        offset += limit
 # @app.route('/playlists')
 # def getPlaylists():
 #     # redirect to authorization url if token is not validated
