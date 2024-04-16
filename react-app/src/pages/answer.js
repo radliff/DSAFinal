@@ -1,7 +1,7 @@
 import React from "react"
 import { useState, useEffect } from "react"
 import ScaleLoader from "react-spinners/ScaleLoader";
-
+import "../index.css"
 
 
 export const Answer = () => {
