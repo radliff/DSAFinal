@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import {Home} from './pages/homePage';
 import { SubmitLink } from './pages/submitLink';
 import { Categories } from './pages/categories';
+
 import { Answer } from './pages/answer';
+
 
 function App() {
   return (
