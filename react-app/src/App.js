@@ -4,6 +4,9 @@ import {Home} from './pages/homePage';
 import { SubmitLink } from './pages/submitLink';
 import { Categories } from './pages/categories';
 
+import { Answer } from './pages/answer';
+
+
 function App() {
   return (
     <div className="app">
@@ -12,6 +15,7 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path="/submitLink" element={<SubmitLink/>} />
           <Route path="/categories" element={<Categories/>} />
+          <Route path="/answer" element={<Answer/>} />
         </Routes>
     </Router>
       

@@ -37,7 +37,6 @@ export const Categories = () => {
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
-=======
 import '../index.css'; 
 
 export const Categories = () => {
@@ -62,6 +61,7 @@ export const Categories = () => {
             onClick={() => handleClick(category.id, category.name)}
           >
             {category.name}
+
         {categories.map((category, index) => (
           <button
             key={index}

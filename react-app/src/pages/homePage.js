@@ -44,9 +44,20 @@ export const Home = () => {
             
             <button className="button-login" onClick={HandleLogin}>Login</button>
             
+
+             <Link to="/categories">
+                <button className="button">Get Started</button>
+            </Link> 
+
+            <Link to="/answer">
+                <button className="button">Answer Page</button>
+            </Link> 
+
+
             { <Link to="/categories">
                 <button className="button">Get Started</button>
             </Link> }
+
         </div>
     );
 };
