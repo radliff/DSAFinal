@@ -133,4 +133,133 @@ body {
   font-family: 'Times New Roman', Times, serif;
   padding: 12px 24px;
   cursor: pointer;
-  margin-top: 20px; }
+  margin-top: 20px; 
+}
+
+.categories-container {
+  background-color: #00a2ff; /* Set the background color to blue */
+  min-height: 100vh; /* Take full height of the viewport */
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Stack the title and categories list */
+  align-items: center;
+  justify-content: center;
+}
+
+.categories-title {
+  color: white;
+  font-size: 48px; /* Set a large font size for the title */
+  margin-bottom: 100px; /* Space between the title and the buttons */
+}
+
+.categories-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.category-button {
+  background-color: #00a2ff; /* Make the button background the same as the container */
+  border: 2px solid white; /* Give a white border to distinguish the buttons */
+  color: white; /* Set text color to white for contrast */
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 20px; /* This will make the buttons oval */
+  outline: none; /* Remove the default focus outline */
+  transition: transform 0.3s;
+  
+  /* Optional: Add some styles on hover to give a visual effect */
+  &:hover {
+    transform: scale(1.05); /* Slightly increase size on hover */
+  }
+}
+
+
+
+.answer-loading-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #282c34;
+}
+
+.answer-page-container{
+  padding: 20px;
+}
+
+
+.compatibility{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 28px 0;
+}
+
+.compatibility h1, .compatibility p{
+  color: white;
+}
+
+
+.compatibility h1{
+  margin: 12px;
+  padding: 24px;
+  font-size: 40px;
+}
+
+.compatibility p{
+  font-size: 32px;
+}
+
+
+.answer-playlists{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.playlist-container{
+  padding: 16px;
+ 
+}
+
+.playlist-container h3{
+  color: white;
+  padding-bottom: 16px;
+  font-size: 24px;
+}
+
+.playlist-container p{
+  color: white;
+  padding-bottom: 16px;
+  font-size: 20px;
+}
+
+.sorting-time{
+  margin: 12px 0;
+}
+
+.first-line,
+.second-line,
+.sorting-time h4{
+  color: white;
+}
+
+.first-line{
+  padding-bottom: 4px;
+}
+.second-line{
+  padding-bottom: 8px;
+}
+
+.sorting-time h4{
+  padding: 8px 4px;
+}
+
+

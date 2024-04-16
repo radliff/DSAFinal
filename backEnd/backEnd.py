@@ -52,6 +52,7 @@ def login():
 
 @app.route('/callback')
 def callback():
+    # verify access token so we can use spotify data
     SP_OAUTH.get_access_token(request.args['code'])
     return redirect(url_for('submitLink'))
 
@@ -66,8 +67,60 @@ def getPlaylistName():
     playlist = sp.playlist(playlistID)
     playlist_name = playlist['name']
     return jsonify({'name': playlist_name})
+
+@app.route('/categories', methods=['POST'])
+def handle_category_click():
+    data = request.json
+    category_id = data['categoryId']
+    
+    # come up with compatibility score for all playlists in category
+
+    # this is a dictionary containing keys for the playlists
+    playlists = sp.category_playlists(category_id=category_id, limit=10)
+    # getScore(playlists)
+
+    # Then you can return a success response or further data as needed
+    return jsonify({"message": "Number of tracks in this playlist:", "track Number": calcScore("66ZndsAIRfhOqzdv45vnY9")}), 200
 ''' 
 '''
+
+def getScore(playlists):
+    playlist_scores = []
+    # iterate over every playlist
+    for playlist in playlists['items']:
+        playlist_ID = playlist['id']
+        playlist_scores.append(calcScore(playlist_ID))
+    return playlist_scores[0]
+
+def calcScore(playlist_ID):
+    # get every track in playlist & iterate
+    playlist_tracks = sp.playlist_tracks(playlist_id=playlist_ID)['items']
+
+    # this is for calculating avg
+    count = sp.playlist_tracks(playlist_id=playlist_ID)['total']
+
+    # defining all features
+    acousticness = danceability = energy = loudness = speechiness = 0
+    loopCount = 0
+    for track in playlist_tracks:
+        # get audio features from each track
+        audio_features = sp.audio_features(tracks=track['track']['id'])[0]
+        acousticness += audio_features['acousticness']
+        danceability += audio_features['danceability']
+        energy += audio_features['energy']
+        loudness += audio_features['loudness']
+        speechiness += audio_features['speechiness']
+        loopCount += 1
+    print(loopCount)
+    # calculating averages for each feature
+    avg_acousticness = acousticness / count
+    avg_danceability = danceability / count
+    avg_energy = energy / count
+    avg_loudness = loudness / count
+    avg_speechiness = speechiness / count
+    # may add weights to this to fix inverse averages being the same, dont know
+    score = (avg_acousticness + avg_energy + avg_danceability + avg_speechiness + avg_loudness) / 5.0
+    return score
 # @app.route('/playlists')
 # def getPlaylists():
 #     # redirect to authorization url if token is not validated
