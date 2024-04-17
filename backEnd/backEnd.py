@@ -6,37 +6,9 @@ from spotipy.oauth2 import SpotifyOAuth
 from spotipy import Spotify
 from spotipy.cache_handler import FlaskSessionCacheHandler
 import urllib.parse
+import time
 
 
-app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
-
-app.secret_key = 'secretSpotifyKey'
-
-CLIENT_ID = '247f9735be324d5b963621261d460aa3'
-CLIENT_SECRET = '73792a1a0c504291a13acbd19983018a'
-
-# this is what callback redirects to
-REDIRECT_URI = 'http://localhost:5000/callback'
-
-# privacy permissions we need from user
-SCOPE = 'user-read-private user-read-email playlist-read-private'
-
-# cache handler for spotipy
-CACHE_HANDLER = FlaskSessionCacheHandler(session)
-
-# this is where Oauth comes in: access token, refresh token, expiry token
-SP_OAUTH = SpotifyOAuth(
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
-    redirect_uri=REDIRECT_URI,
-    scope=SCOPE,
-    cache_handler=CACHE_HANDLER,
-    show_dialog=True
-)
-
-sp = Spotify(auth_manager=SP_OAUTH)
-
-CORS(app)
 
 # O(n) time complexity
 def getScore(playlists):
@@ -95,12 +67,119 @@ def calcScore(playlist_ID):
     avg_speechiness = total_speechiness / count
 
     # scale loudness by -1
-    avg_loudness *= -1
+    avg_loudness = (avg_loudness + 60) / 60
     # return the average of all features
     score = (avg_acousticness + avg_energy + avg_danceability + avg_speechiness + avg_loudness) / 5.0
     
-    score = (score + 1) * 50
+    score = (score * 100) + 1
     return score
+# Brian's stuff
+# Function to find the partition position
+def partition(array, low, high):
+
+	# choose the rightmost element as pivot
+	pivot = array[high]
+
+	# pointer for greater element
+	i = low - 1
+
+	# traverse through all elements
+	# compare each element with pivot
+	for j in range(low, high):
+		if array[j] <= pivot:
+
+			# If element smaller than pivot is found
+			# swap it with the greater element pointed by i
+			i = i + 1
+
+			# Swapping element at i with element at j
+			(array[i], array[j]) = (array[j], array[i])
+
+	# Swap the pivot element with the greater element specified by i
+	(array[i + 1], array[high]) = (array[high], array[i + 1])
+
+	# Return the position from where partition is done
+	return i + 1
+
+# function to perform quicksort
+
+
+def quickSort(array, low, high):
+	if low < high:
+
+		# Find pivot element such that
+		# element smaller than pivot are on the left
+		# element greater than pivot are on the right
+		pi = partition(array, low, high)
+
+		# Recursive call on the left of pivot
+		quickSort(array, low, pi - 1)
+
+		# Recursive call on the right of pivot
+		quickSort(array, pi + 1, high)
+
+def timed_quickSort(array):
+    starting_time = time.time()
+    quickSort(array, 0, len(array) - 1)
+    ending_time = time.time()
+    return round(ending_time - starting_time, 7)
+
+# chris did this
+def merge(left, right):
+    result = [] # create empty list to append too
+    while left and right:
+        if left[0] < right[0]:
+            result.append(left[0])
+            left = left[1:]
+        else:
+            result.append(right[0])
+            right = right[1:]
+    result.extend(left)
+    result.extend(right)
+    return result
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr      # base case chekc
+    mid = len(arr) // 2  # get the middle index
+    left = merge_sort(arr[:mid]) # recuresive sorts the left hald
+    right = merge_sort(arr[mid:]) # recursively sorts the right half!
+    return merge(left, right) # sorts the left and right half
+def timed_merge_sort(arr):
+    start_time = time.perf_counter()
+    sorted_arr = merge_sort(arr)
+    end_time = time.perf_counter()
+    duration = end_time - start_time
+    return round(duration, 7)
+
+app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
+
+app.secret_key = 'secretSpotifyKey'
+
+CLIENT_ID = '247f9735be324d5b963621261d460aa3'
+CLIENT_SECRET = '73792a1a0c504291a13acbd19983018a'
+
+# this is what callback redirects to
+REDIRECT_URI = 'http://localhost:5000/callback'
+
+# privacy permissions we need from user
+SCOPE = 'user-read-private user-read-email playlist-read-private'
+
+# cache handler for spotipy
+CACHE_HANDLER = FlaskSessionCacheHandler(session)
+
+# this is where Oauth comes in: access token, refresh token, expiry token
+SP_OAUTH = SpotifyOAuth(
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET,
+    redirect_uri=REDIRECT_URI,
+    scope=SCOPE,
+    cache_handler=CACHE_HANDLER,
+    show_dialog=True
+)
+
+sp = Spotify(auth_manager=SP_OAUTH)
+
+CORS(app)
 
 @app.route('/')
 def home():
@@ -131,6 +210,8 @@ def getPlaylistName():
     playlistID = request.args.get('id')
     playlist = sp.playlist(playlistID)
     playlist_name = playlist['name']
+    # calcluate score of given playlist
+    calcScore(playlistID)
     return jsonify({'name': playlist_name})
 
 @app.route('/categories', methods=['POST'])
@@ -141,38 +222,9 @@ def handle_category_click():
     # come up with compatibility score for all playlists in category
 
     # this is a dictionary containing keys for the playlists
-    playlists = sp.category_playlists(category_id=category_id, limit=15)
+    playlists = sp.category_playlists(category_id=category_id, limit=5)
     scores = getScore(playlists)
     return jsonify((scores))
-    # Then you can return a success response or further data as needed
-    return jsonify({"message": "Number of tracks in this playlist:", "track Number": score}), 200
-''' 
-'''
-
-''' 
-'''
-# @app.route('/playlists')
-# def getPlaylists():
-#     # redirect to authorization url if token is not validated
-#     # if not SP_OAUTH.validate_token(CACHE_HANDLER.get_cached_token()):
-#     #     authUrl = SP_OAUTH.get_authorize_url()
-#     #     return redirect(authUrl)
-#     # playlistID = "4h0eEGBZevv0ZpSbmvP3qa"
-#     # playlist_tracks = sp.playlist_items(playlistID, additional_types='track')
-
-#     # trackFeatures = []
-#     # # iterates over every track in playlist & returns name
-#     # for track in playlist_tracks['items']:
-#     #     track_ID = track['track']['id']
-#     #     feature = sp.audio_features(track_ID)
-
-#     #     trackFeatures.append(feature)
-#     # print(trackFeatures)
-#     # return app.send_static_file('playlists.html')
-
-
-#     ''' I need a way to read the playlist ID from the URL, 
-#     that way, the user can just copy & paste'''
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
