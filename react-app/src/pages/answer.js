@@ -3,7 +3,6 @@ import { useState, useEffect } from "react"
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 
-
 export const Answer = () => {
 
     const [loading, setLoading] = useState(false);
@@ -12,18 +11,14 @@ export const Answer = () => {
         setLoading(true)
         setTimeout(() => {
             setLoading(false)
-        }, 1000)
+        }, 10000)
     }, [])
-
-
 
     return (
         <div>
         {
             loading ?
                 <div className="answer-loading-page">
-
-            
                     <ScaleLoader
                         color={"#36d7b7"}
                         loading={loading}

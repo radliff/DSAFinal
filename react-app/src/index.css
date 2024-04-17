@@ -261,5 +261,81 @@ body {
 .sorting-time h4{
   padding: 8px 4px;
 }
+
+
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+#app .arrow:first-child {
+  opacity: 0.4;
+}
+#app .arrow:nth-child(2) {
+  opacity: 0.7;
+}
+.arrow {
+  padding-top: 10px;
+}
+.arrow-container{
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.arrow:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background: #282c34;
+  display: inline-block;
+  transform: skewY(45deg);
+}
+.arrow:after {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background: #282c34;
+  display: inline-block;
+  transform: skewY(-45deg);
+}
+.arrowSliding {
+  animation: slide 4s linear infinite;
+}
+.delay1 {
+  animation-delay: 0s;
+}
+.delay2 {
+  animation-delay: 1s;
+}
+.delay3 {
+  animation-delay: 2s;
 }
 
+@keyframes slide {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  55% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.error-message{
+  color: red;
+}
+
+.hereButton{
+  background-color: #00a2ff;
+  color: white;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 12px 24px;
+  cursor: pointer;
+  margin-top: 20px; 
+}
