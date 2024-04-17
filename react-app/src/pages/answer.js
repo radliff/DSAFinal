@@ -3,7 +3,6 @@ import { useState, useEffect } from "react"
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 
-
 export const Answer = () => {
 
     const [loading, setLoading] = useState(false);
