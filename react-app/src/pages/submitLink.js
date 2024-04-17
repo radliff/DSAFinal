@@ -49,13 +49,15 @@ export const SubmitLink = () => {
                 type="text"
                 placeholder="Enter playlist link"
                 value={playlistLink}
-                onChange={handleChange}
-              />
-              <button 
-                className="formButton" 
-                type="submit">
-                Submit
-              </button>
+                onChange={handleChange} />
+
+              <Link to="/categories">
+                <button 
+                  className="formButton" 
+                  type="submit">
+                  Submit
+                </button>
+              </Link> 
             </form>
             {SubmitLink && (
               <div>
@@ -85,4 +87,3 @@ export const SubmitLink = () => {
 //         </div>
 //     );
 // };
-

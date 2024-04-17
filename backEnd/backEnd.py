@@ -38,6 +38,70 @@ sp = Spotify(auth_manager=SP_OAUTH)
 
 CORS(app)
 
+# O(n) time complexity
+def getScore(playlists):
+    playlist_scores = []
+    # iterate over every playlist
+    for playlist in playlists['playlists']['items']:
+        playlist_ID = playlist['id']
+        playlist_scores.append(calcScore(playlist_ID))
+    return playlist_scores
+
+# O(n) time complexity: where n is the number of tracks in the playlist
+def calcScore(playlist_ID):
+    # this is for calculating avg
+    count = sp.playlist_tracks(playlist_id=playlist_ID)['total']
+    print(count)
+    # defining all features
+    acousticness = danceability = energy = loudness = speechiness = 0
+    limit = 100
+    # playlist_tracks only grabs 100 tracks at a time, so we grab 1-100, 101-201, etc.
+    offset = 0
+    total_audio_features = []
+    i = 1
+    # here, we minimze the # of api calls we need to make by grabbing 100 tracks at a time
+    while offset < count:
+        print(offset)
+        # this makes it so we do the page iteration described above
+        playlist_tracks = sp.playlist_tracks(playlist_id=playlist_ID, offset=offset, limit=limit)['items']
+        track_ids = []
+        print(offset)
+        # grab as many tracks as we can at once (100)
+        for track in playlist_tracks:
+            if 'is_playable' in track and not track['is_playable']:
+                print(track['track']['name'] + " is not playable")
+                continue
+            if 'track' in track and track['track'] is not None and 'id' in track['track']:
+                track_ids.append(track['track']['id'])
+                print(f"{i}. " +  track['track']['name'] + " is playable")
+                i += 1
+        # we now grab ALL audio features for the 100 track IDs & append to the total audio features list
+        audio_features = sp.audio_features(track_ids)
+        print(offset)
+        total_audio_features.extend(audio_features)
+        # keep increasing the offset until it is equal to the total tracks
+        offset += limit
+    # calculate averages for all features
+    total_acousticness = sum(feature['acousticness'] for feature in total_audio_features)
+    total_danceability = sum(feature['danceability'] for feature in total_audio_features)
+    total_energy = sum(feature['energy'] for feature in total_audio_features)
+    total_loudness = sum(feature['loudness'] for feature in total_audio_features)
+    total_speechiness = sum(feature['speechiness'] for feature in total_audio_features)
+
+    avg_acousticness = total_acousticness / count
+    avg_danceability = total_danceability / count
+    avg_energy = total_energy / count
+    avg_loudness = total_loudness / count
+    avg_speechiness = total_speechiness / count
+
+    # scale loudness by -1
+    avg_loudness *= -1
+    # return the average of all features
+    score = (avg_acousticness + avg_energy + avg_danceability + avg_speechiness + avg_loudness) / 5.0
+    
+    score = (score + 1) * 50
+    return score
+
 @app.route('/')
 def home():
     return app.send_static_file('index.html')
@@ -58,6 +122,7 @@ def callback():
 
 @app.route('/submitLink')
 def submitLink():
+    # returns page where we want user to submit link
     return app.send_static_file('index.html')
 
 
@@ -76,45 +141,16 @@ def handle_category_click():
     # come up with compatibility score for all playlists in category
 
     # this is a dictionary containing keys for the playlists
-    playlists = sp.category_playlists(category_id=category_id, limit=10)
-    # getScore(playlists)
-
+    playlists = sp.category_playlists(category_id=category_id, limit=15)
+    scores = getScore(playlists)
+    return jsonify((scores))
     # Then you can return a success response or further data as needed
-    return jsonify({"message": "Number of tracks in this playlist:", "track Number": calcScore("66ZndsAIRfhOqzdv45vnY9")}), 200
+    return jsonify({"message": "Number of tracks in this playlist:", "track Number": score}), 200
 ''' 
 '''
 
-def getScore(playlists):
-    playlist_scores = []
-    # iterate over every playlist
-    for playlist in playlists['items']:
-        playlist_ID = playlist['id']
-        playlist_scores.append(calcScore(playlist_ID))
-    return playlist_scores[0]
-
-def calcScore(playlist_ID):
-    # this is for calculating avg
-    count = sp.playlist_tracks(playlist_id=playlist_ID)['total']
-
-    # defining all features
-    acousticness = danceability = energy = loudness = speechiness = 0
-    limit = 100
-    # playlist_tracks only grabs 100 tracks at a time, so we grab 1-100, 101-201, etc.
-    offset = 0
-    total_audio_features = []
-    # here, we minimze the # of api calls we need to make by grabbing 100 tracks at a time
-    while offset < count:
-        # this makes it so we do the page iteration described above
-        playlist_tracks = sp.playlist_tracks(playlist_id=playlist_ID, offset=offset)['items']
-        track_ids = []
-        # grab as many tracks as we can at once (100)
-        for track in playlist_tracks:
-            track_ids.append(track['track']['id'])
-        # we now grab ALL audio features for the 100 track IDs & append to the total audio features list
-        audio_features = sp.audio_features(track_ids)
-        total_audio_features.extend(audio_features)
-        # keep increasing the offset until it is equal to the total tracks
-        offset += limit
+''' 
+'''
 # @app.route('/playlists')
 # def getPlaylists():
 #     # redirect to authorization url if token is not validated
@@ -139,4 +175,4 @@ def calcScore(playlist_ID):
 #     that way, the user can just copy & paste'''
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
