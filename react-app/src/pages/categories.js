@@ -56,3 +56,4 @@ export const Categories = () => {
     </div>
   );
 };
+

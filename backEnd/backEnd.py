@@ -225,6 +225,35 @@ def handle_category_click():
     playlists = sp.category_playlists(category_id=category_id, limit=5)
     scores = getScore(playlists)
     return jsonify((scores))
+    # Process the category_id as needed
+    # For example, you might look up the category by ID and do something with it
+
+    # Then you can return a success response or further data as needed
+    return jsonify({"message": "Category ID received successfully", "categoryId": category_id}), 200
+''' 
+'''
+# @app.route('/playlists')
+# def getPlaylists():
+#     # redirect to authorization url if token is not validated
+#     # if not SP_OAUTH.validate_token(CACHE_HANDLER.get_cached_token()):
+#     #     authUrl = SP_OAUTH.get_authorize_url()
+#     #     return redirect(authUrl)
+#     # playlistID = "4h0eEGBZevv0ZpSbmvP3qa"
+#     # playlist_tracks = sp.playlist_items(playlistID, additional_types='track')
+
+#     # trackFeatures = []
+#     # # iterates over every track in playlist & returns name
+#     # for track in playlist_tracks['items']:
+#     #     track_ID = track['track']['id']
+#     #     feature = sp.audio_features(track_ID)
+
+#     #     trackFeatures.append(feature)
+#     # print(trackFeatures)
+#     # return app.send_static_file('playlists.html')
+
+
+#     ''' I need a way to read the playlist ID from the URL, 
+#     that way, the user can just copy & paste'''
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
