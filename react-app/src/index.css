@@ -175,3 +175,167 @@ body {
     transform: scale(1.05); /* Slightly increase size on hover */
   }
 }
+
+
+
+.answer-loading-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #282c34;
+}
+
+.answer-page-container{
+  padding: 20px;
+}
+
+
+.compatibility{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 28px 0;
+}
+
+.compatibility h1, .compatibility p{
+  color: white;
+}
+
+
+.compatibility h1{
+  margin: 12px;
+  padding: 24px;
+  font-size: 40px;
+}
+
+.compatibility p{
+  font-size: 32px;
+}
+
+
+.answer-playlists{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.playlist-container{
+  padding: 16px;
+ 
+}
+
+.playlist-container h3{
+  color: white;
+  padding-bottom: 16px;
+  font-size: 24px;
+}
+
+.playlist-container p{
+  color: white;
+  padding-bottom: 16px;
+  font-size: 20px;
+}
+
+.sorting-time{
+  margin: 12px 0;
+}
+
+.first-line,
+.second-line,
+.sorting-time h4{
+  color: white;
+}
+
+.first-line{
+  padding-bottom: 4px;
+}
+.second-line{
+  padding-bottom: 8px;
+}
+
+.sorting-time h4{
+  padding: 8px 4px;
+}
+
+
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+#app .arrow:first-child {
+  opacity: 0.4;
+}
+#app .arrow:nth-child(2) {
+  opacity: 0.7;
+}
+.arrow {
+  padding-top: 10px;
+}
+.arrow-container{
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.arrow:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background: #282c34;
+  display: inline-block;
+  transform: skewY(45deg);
+}
+.arrow:after {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background: #282c34;
+  display: inline-block;
+  transform: skewY(-45deg);
+}
+.arrowSliding {
+  animation: slide 4s linear infinite;
+}
+.delay1 {
+  animation-delay: 0s;
+}
+.delay2 {
+  animation-delay: 1s;
+}
+.delay3 {
+  animation-delay: 2s;
+}
+
+@keyframes slide {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  55% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.error-message{
+  color: red;
+}
+
+.hereButton{
+  background-color: #00a2ff;
+  color: white;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 12px 24px;
+  cursor: pointer;
+  margin-top: 20px; 
+}

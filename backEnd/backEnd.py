@@ -6,6 +6,8 @@ from spotipy.oauth2 import SpotifyOAuth
 from spotipy import Spotify
 from spotipy.cache_handler import FlaskSessionCacheHandler
 import urllib.parse
+import time
+
 
 
 # O(n) time complexity
@@ -168,7 +170,6 @@ def findList(catScores, score):
     mTime = timed_merge_sort([diff[0] for diff in differences])
     # return the times and the differences, along with playlist name
     return qTime, mTime, differences
-
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
 
 app.secret_key = 'secretSpotifyKey'
@@ -213,12 +214,15 @@ def login():
 
 @app.route('/callback')
 def callback():
+    # verify access token so we can use spotify data
     SP_OAUTH.get_access_token(request.args['code'])
     return redirect(url_for('submitLink'))
 
 @app.route('/submitLink')
 def submitLink():
+    # returns page where we want user to submit link
     return app.send_static_file('index.html')
+
 
 @app.route('/playlist')
 def getPlaylistName():
@@ -277,4 +281,4 @@ def handle_category_click():
 #     that way, the user can just copy & paste'''
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

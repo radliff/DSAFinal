@@ -1,6 +1,7 @@
 import React from 'react';
 import '../index.css';
 
+
 export const Categories = () => {
   const categories = [
     { name: 'made for you', id: '0JQ5DAt0tbjZptfcdMSKl3' },
@@ -15,11 +16,14 @@ export const Categories = () => {
     { name: 'dance/electronic', id: '0JQ5DAqbMKFHOzuVTgTizF' }
   ];
 
+
   const handleClick = async (categoryId, categoryName) => {
     let score = localStorage.getItem('selectedPlaylistScore');
     score = parseFloat(score);
     console.log(`Category ${categoryName} with ID ${categoryId} clicked`);
-    
+
+
+    // Replace '/your-flask-endpoint' with your actual Flask backend endpoint
     try {
       const response = await fetch('http://localhost:5000/categories', {
         method: 'POST',
@@ -29,9 +33,11 @@ export const Categories = () => {
         body: JSON.stringify({ categoryId, score }),
       });
 
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
 
       const data = await response.json();
       console.log(data); // You can handle the response data as needed
@@ -39,6 +45,7 @@ export const Categories = () => {
       console.error('There was a problem with the fetch operation:', error);
     }
   };
+
 
   return (
     <div className="categories-container">
