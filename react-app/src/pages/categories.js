@@ -20,14 +20,13 @@ export const Categories = () => {
     score = parseFloat(score);
     console.log(`Category ${categoryName} with ID ${categoryId} clicked`);
     
-    // Replace '/your-flask-endpoint' with your actual Flask backend endpoint
     try {
       const response = await fetch('http://localhost:5000/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ categoryId, score}),
+        body: JSON.stringify({ categoryId, score }),
       });
 
       if (!response.ok) {
@@ -39,24 +38,12 @@ export const Categories = () => {
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
-=======
-import '../index.css'; 
-
-export const Categories = () => {
-  const categories = [
-    'made for you', 'pop', 'hip-hop', 'country',
-    'rock', 'r&b', 'metal', 'afro', 'indie', 'dance/electronic'
-  ];
-
-  const handleClick = (name) => {
-    console.log(`Category ${name} clicked`); 
   };
 
   return (
     <div className="categories-container">
       <h1 className="categories-title">Categories to choose from:</h1>
       <div className="categories-list">
-
         {categories.map((category) => (
           <button
             key={category.id}
@@ -64,13 +51,6 @@ export const Categories = () => {
             onClick={() => handleClick(category.id, category.name)}
           >
             {category.name}
-        {categories.map((category, index) => (
-          <button
-            key={index}
-            className="category-button"
-            onClick={() => handleClick(category)}
-          >
-            {category}
           </button>
         ))}
       </div>
