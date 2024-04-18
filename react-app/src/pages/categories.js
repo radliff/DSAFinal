@@ -16,6 +16,8 @@ export const Categories = () => {
   ];
 
   const handleClick = async (categoryId, categoryName) => {
+    let score = localStorage.getItem('selectedPlaylistScore');
+    score = parseFloat(score);
     console.log(`Category ${categoryName} with ID ${categoryId} clicked`);
     
     // Replace '/your-flask-endpoint' with your actual Flask backend endpoint
@@ -25,7 +27,7 @@ export const Categories = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ categoryId }),
+        body: JSON.stringify({ categoryId, score}),
       });
 
       if (!response.ok) {

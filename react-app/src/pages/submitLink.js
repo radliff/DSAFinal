@@ -6,24 +6,32 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 
 export const SubmitLink = () => {
-  const [playlistLink, setPlaylistLink] = useState('');
-  const [playlistId, setPlaylistId] = useState('');
-  const [playlistName, setPlaylistName] = useState('');
-  const location = useLocation();
+  const [playlistLink, setPlaylistLink] = useState("");
+  const [playlistId, setPlaylistId] = useState("");
+  const [playlistName, setPlaylistName] = useState("");
+  const [isValidPlaylist, setIsValidPlaylist] = useState(null);
 
   const handleChange = (event) => {
       setPlaylistLink(event.target.value);
   };
 
   const handleSubmit = (event) => {
-      event.preventDefault();
-      // Extract playlist ID from the entered Spotify URL
-      const id = playlistLink.split('/').pop().split('?')[0];
-      setPlaylistId(id);
-      fetch(`http://localhost:5000/playlist?id=${id}`)
-          .then(response => response.json())
-          .then(data => setPlaylistName(data.name))
-          .catch(error => console.error('Error:', error));
+    event.preventDefault();
+    // Extract playlist ID from the entered Spotify URL
+    const id = playlistLink.split("/").pop().split("?")[0];
+    setPlaylistId(id);
+    fetch(`http://localhost:5000/playlist?id=${id}`)
+      .then((response) => {
+        if (response.ok) {
+          setIsValidPlaylist(true);
+          return response.json();
+        } else {
+          setIsValidPlaylist(false);
+          return Promise.reject("Playlist is not valid");
+        }
+      })
+      .then((data) => setPlaylistName(data.name))
+      .catch((error) => console.error("Error:", error));
   };
 
 

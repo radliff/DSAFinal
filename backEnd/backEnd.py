@@ -8,6 +8,165 @@ from spotipy.cache_handler import FlaskSessionCacheHandler
 import urllib.parse
 
 
+# O(n) time complexity
+def getScore(playlists):
+    playlist_scores = []
+    # iterate over every playlist
+    for playlist in playlists['playlists']['items']:
+        playlist_ID = playlist['id']
+        playlist_scores.append(calcScore(playlist_ID))
+    return playlist_scores
+
+# O(n) time complexity: where n is the number of tracks in the playlist
+def calcScore(playlist_ID):
+    # this is for calculating avg
+    count = sp.playlist_tracks(playlist_id=playlist_ID)['total']
+    # defining all features
+    acousticness = danceability = energy = loudness = speechiness = 0
+    limit = 100
+    # playlist_tracks only grabs 100 tracks at a time, so we grab 1-100, 101-201, etc.
+    offset = 0
+    total_audio_features = []
+    i = 1
+    # here, we minimze the # of api calls we need to make by grabbing 100 tracks at a time
+    while offset < count:
+        print(offset)
+        # this makes it so we do the page iteration described above
+        playlist_tracks = sp.playlist_tracks(playlist_id=playlist_ID, offset=offset, limit=limit)['items']
+        track_ids = []
+        print(offset)
+        # grab as many tracks as we can at once (100)
+        for track in playlist_tracks:
+            # if 'is_playable' in track and not track['is_playable']:
+            #     print(track['track']['name'] + " is not playable")
+            #     continue
+            if 'track' in track and track['track'] is not None and 'id' in track['track']:
+                track_ids.append(track['track']['id'])
+        # we now grab ALL audio features for the 100 track IDs & append to the total audio features list
+        audio_features = sp.audio_features(track_ids)
+        print(offset)
+        total_audio_features.extend(audio_features)
+        # keep increasing the offset until it is equal to the total tracks
+        offset += limit
+    # calculate averages for all features
+    total_acousticness = total_danceability = total_energy = total_loudness = total_speechiness = 0
+
+    for feature in total_audio_features:
+        total_acousticness += feature['acousticness']
+        total_danceability += feature['danceability']
+        total_energy += feature['energy']
+        total_loudness += feature['loudness']
+        total_speechiness += feature['speechiness']
+
+    avg_acousticness = total_acousticness / count
+    avg_danceability = total_danceability / count
+    avg_energy = total_energy / count
+    avg_loudness = total_loudness / count
+    avg_speechiness = total_speechiness / count
+
+
+    # scale loudness by -1
+    avg_loudness = (avg_loudness + 60) / 60
+    # return the average of all features
+    score = (avg_acousticness + avg_energy + avg_danceability + avg_speechiness + avg_loudness) / 5.0
+    
+    score = (score * 100) + 1
+    # grabbing the playlist name
+    playlist = sp.playlist(playlist_id=playlist_ID)
+    playlist_name = playlist['name']
+    # playlist_name = 'playlist name'
+    return score, playlist_name
+# Brian's stuff
+# Function to find the partition position
+def partition(array, low, high):
+
+	# choose the rightmost element as pivot
+	pivot = array[high]
+
+	# pointer for greater element
+	i = low - 1
+
+	# traverse through all elements
+	# compare each element with pivot
+	for j in range(low, high):
+		if array[j] <= pivot:
+
+			# If element smaller than pivot is found
+			# swap it with the greater element pointed by i
+			i = i + 1
+
+			# Swapping element at i with element at j
+			(array[i], array[j]) = (array[j], array[i])
+
+	# Swap the pivot element with the greater element specified by i
+	(array[i + 1], array[high]) = (array[high], array[i + 1])
+
+	# Return the position from where partition is done
+	return i + 1
+
+# function to perform quicksort
+
+
+def quickSort(array, low, high):
+	if low < high:
+
+		# Find pivot element such that
+		# element smaller than pivot are on the left
+		# element greater than pivot are on the right
+		pi = partition(array, low, high)
+
+		# Recursive call on the left of pivot
+		quickSort(array, low, pi - 1)
+
+		# Recursive call on the right of pivot
+		quickSort(array, pi + 1, high)
+
+def timed_quickSort(array):
+    starting_time = time.time()
+    quickSort(array, 0, len(array) - 1)
+    ending_time = time.time()
+    return round(ending_time - starting_time, 7)
+
+# chris did this
+def merge(left, right):
+    result = [] # create empty list to append too
+    while left and right:
+        if left[0] < right[0]:
+            result.append(left[0])
+            left = left[1:]
+        else:
+            result.append(right[0])
+            right = right[1:]
+    result.extend(left)
+    result.extend(right)
+    return result
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr      # base case chekc
+    mid = len(arr) // 2  # get the middle index
+    left = merge_sort(arr[:mid]) # recuresive sorts the left hald
+    right = merge_sort(arr[mid:]) # recursively sorts the right half!
+    return merge(left, right) # sorts the left and right half
+def timed_merge_sort(arr):
+    start_time = time.perf_counter()
+    sorted_arr = merge_sort(arr)
+    end_time = time.perf_counter()
+    duration = end_time - start_time
+    return round(duration, 7)
+
+def findList(catScores, score):
+    differences = []
+    for playlist_score, playlist_name in catScores:
+        percentDiff = abs((playlist_score - score) / score) * 100
+        differences.append((percentDiff, playlist_name))
+    # use this to sort the main differences and access playlist name w/ it
+    differences = merge_sort(differences)
+    # sort only percent differences & give times
+    qTime = timed_quickSort([diff[0] for diff in differences])
+    mTime = timed_merge_sort([diff[0] for diff in differences])
+    # return the times and the differences, along with playlist name
+    return qTime, mTime, differences
+
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
 
 app.secret_key = 'secretSpotifyKey'
@@ -59,17 +218,39 @@ def callback():
 def submitLink():
     return app.send_static_file('index.html')
 
-
 @app.route('/playlist')
 def getPlaylistName():
     playlistID = request.args.get('id')
     playlist = sp.playlist(playlistID)
     playlist_name = playlist['name']
+
     return jsonify({'name': playlist_name})
 @app.route('/categories', methods=['POST'])
 def handle_category_click():
     data = request.json
     category_id = data['categoryId']
+    score = calcScore(playlistID)  # Assuming calcScore returns a score
+    print(score)
+    return jsonify({'name': playlist_name, 'score': score})
+
+@app.route('/categories', methods=['POST'])
+def handle_category_click():
+    try:
+        data = request.json
+        category_id = data['categoryId']
+        user_score = data['score']
+    # come up with compatibility score for all playlists in category
+
+    # this is a dictionary containing keys for the playlists
+        playlists = sp.category_playlists(category_id=category_id, limit=10)
+    # returns an array of category playlists 
+        scores = getScore(playlists)
+        time = findList(scores, float(user_score))
+        return jsonify({'scores': scores, 'time': time, 'user_score': user_score})
+    except Exception as e:
+        response = jsonify({"error": str(e)})
+        response.status_code = 500
+        return response
     # Process the category_id as needed
     # For example, you might look up the category by ID and do something with it
 
