@@ -9,6 +9,8 @@ export const SubmitLink = () => {
   const [playlistLink, setPlaylistLink] = useState("");
   const [playlistId, setPlaylistId] = useState("");
   const [playlistName, setPlaylistName] = useState("");
+  const [playlistImage, setPlaylistImage] = useState("");  // State for storing the playlist image URL
+  const [playlistScore, setPlaylistScore] = useState(0);   // State for storing the playlist score
   const [isValidPlaylist, setIsValidPlaylist] = useState(null);
 
   const handleChange = (event) => {
@@ -30,7 +32,14 @@ export const SubmitLink = () => {
           return Promise.reject("Playlist is not valid");
         }
       })
-      .then((data) => setPlaylistName(data.name))
+      .then((data) => {
+        setPlaylistName(data.name);
+        setPlaylistImage(data.image_url); // Assume your backend sends `image_url`
+        setPlaylistScore(data.score);     // Assume your backend sends `score`
+        localStorage.setItem('selectedPlaylistName', data.name);
+        localStorage.setItem('selectedPlaylistImage', data.image_url);
+        localStorage.setItem('selectedPlaylistScore', data.score);
+      })
       .catch((error) => console.error("Error:", error));
   };
 

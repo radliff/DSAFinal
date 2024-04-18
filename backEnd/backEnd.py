@@ -122,10 +122,12 @@ def quickSort(array, low, high):
 		quickSort(array, pi + 1, high)
 
 def timed_quickSort(array):
-    starting_time = time.time()
+    print(array)
+    starting_time = time.perf_counter()
     quickSort(array, 0, len(array) - 1)
-    ending_time = time.time()
-    return round(ending_time - starting_time, 7)
+    ending_time = time.perf_counter()
+    duration = ending_time - starting_time
+    return round(duration, 7)
 
 # chris did this
 def merge(left, right):
@@ -160,7 +162,7 @@ def findList(catScores, score):
         percentDiff = abs((playlist_score - score) / score) * 100
         differences.append((percentDiff, playlist_name))
     # use this to sort the main differences and access playlist name w/ it
-    differences = merge_sort(differences)
+    # differences = merge_sort(differences)
     # sort only percent differences & give times
     qTime = timed_quickSort([diff[0] for diff in differences])
     mTime = timed_merge_sort([diff[0] for diff in differences])
@@ -223,34 +225,27 @@ def getPlaylistName():
     playlistID = request.args.get('id')
     playlist = sp.playlist(playlistID)
     playlist_name = playlist['name']
-
-    return jsonify({'name': playlist_name})
-@app.route('/categories', methods=['POST'])
-def handle_category_click():
-    data = request.json
-    category_id = data['categoryId']
-    score = calcScore(playlistID)  # Assuming calcScore returns a score
+    # Calculate score of given playlist
+    score = calcScore(playlistID)  # Ensure this function returns the score
     print(score)
     return jsonify({'name': playlist_name, 'score': score})
 
 @app.route('/categories', methods=['POST'])
 def handle_category_click():
-    try:
-        data = request.json
-        category_id = data['categoryId']
-        user_score = data['score']
-    # come up with compatibility score for all playlists in category
+    data = request.get_json()
+    if not data or 'categoryId' not in data or 'score' not in data:
+        return jsonify({"error": "Missing data"}), 400
 
-    # this is a dictionary containing keys for the playlists
+    category_id = data['categoryId']
+    score = data['score']
+    try:
         playlists = sp.category_playlists(category_id=category_id, limit=10)
-    # returns an array of category playlists 
         scores = getScore(playlists)
-        time = findList(scores, float(user_score))
-        return jsonify({'scores': scores, 'time': time, 'user_score': user_score})
+        time = findList(scores, score)  # Make sure score is converted to the correct type
     except Exception as e:
-        response = jsonify({"error": str(e)})
-        response.status_code = 500
-        return response
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({'scores': scores, 'time': time, 'user_score': score})
     # Process the category_id as needed
     # For example, you might look up the category by ID and do something with it
 
