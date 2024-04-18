@@ -23,7 +23,6 @@ def getScore(playlists):
 def calcScore(playlist_ID):
     # this is for calculating avg
     count = sp.playlist_tracks(playlist_id=playlist_ID)['total']
-    print(count)
     # defining all features
     acousticness = danceability = energy = loudness = speechiness = 0
     limit = 100
@@ -40,13 +39,11 @@ def calcScore(playlist_ID):
         print(offset)
         # grab as many tracks as we can at once (100)
         for track in playlist_tracks:
-            if 'is_playable' in track and not track['is_playable']:
-                print(track['track']['name'] + " is not playable")
-                continue
+            # if 'is_playable' in track and not track['is_playable']:
+            #     print(track['track']['name'] + " is not playable")
+            #     continue
             if 'track' in track and track['track'] is not None and 'id' in track['track']:
                 track_ids.append(track['track']['id'])
-                print(f"{i}. " +  track['track']['name'] + " is playable")
-                i += 1
         # we now grab ALL audio features for the 100 track IDs & append to the total audio features list
         audio_features = sp.audio_features(track_ids)
         print(offset)
@@ -54,11 +51,14 @@ def calcScore(playlist_ID):
         # keep increasing the offset until it is equal to the total tracks
         offset += limit
     # calculate averages for all features
-    total_acousticness = sum(feature['acousticness'] for feature in total_audio_features)
-    total_danceability = sum(feature['danceability'] for feature in total_audio_features)
-    total_energy = sum(feature['energy'] for feature in total_audio_features)
-    total_loudness = sum(feature['loudness'] for feature in total_audio_features)
-    total_speechiness = sum(feature['speechiness'] for feature in total_audio_features)
+    total_acousticness = total_danceability = total_energy = total_loudness = total_speechiness = 0
+
+    for feature in total_audio_features:
+        total_acousticness += feature['acousticness']
+        total_danceability += feature['danceability']
+        total_energy += feature['energy']
+        total_loudness += feature['loudness']
+        total_speechiness += feature['speechiness']
 
     avg_acousticness = total_acousticness / count
     avg_danceability = total_danceability / count
@@ -66,13 +66,18 @@ def calcScore(playlist_ID):
     avg_loudness = total_loudness / count
     avg_speechiness = total_speechiness / count
 
+
     # scale loudness by -1
     avg_loudness = (avg_loudness + 60) / 60
     # return the average of all features
     score = (avg_acousticness + avg_energy + avg_danceability + avg_speechiness + avg_loudness) / 5.0
     
     score = (score * 100) + 1
-    return score
+    # grabbing the playlist name
+    playlist = sp.playlist(playlist_id=playlist_ID)
+    # playlist_name = playlist['name']
+    playlist_name = 'playlist name'
+    return score, playlist_name
 # Brian's stuff
 # Function to find the partition position
 def partition(array, low, high):
@@ -151,6 +156,18 @@ def timed_merge_sort(arr):
     duration = end_time - start_time
     return round(duration, 7)
 
+def findList(catScores, score):
+    differences = []
+    for playlist_score, playlist_name in catScores:
+        percentDiff = abs((playlist_score - score) / score) * 100
+        differences.append((percentDiff, playlist_name))
+    # use this to sort the main differences and access playlist name w/ it
+    differences = merge_sort(differences)
+    # sort only percent differences & give times
+    qTime = timed_quickSort([diff[0] for diff in differences])
+    mTime = timed_merge_sort([diff[0] for diff in differences])
+    # return the times and the differences, along with playlist name
+    return qTime, mTime, differences
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
 
 app.secret_key = 'secretSpotifyKey'
@@ -222,9 +239,11 @@ def handle_category_click():
     # come up with compatibility score for all playlists in category
 
     # this is a dictionary containing keys for the playlists
-    playlists = sp.category_playlists(category_id=category_id, limit=5)
+    playlists = sp.category_playlists(category_id=category_id, limit=10)
+    # returns an array of category playlists 
     scores = getScore(playlists)
-    return jsonify((scores))
+    time = findList(scores, 100)
+    return jsonify({'scores': scores, 'time': time})
     # Process the category_id as needed
     # For example, you might look up the category by ID and do something with it
 
