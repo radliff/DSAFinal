@@ -39,9 +39,9 @@ def calcScore(playlist_ID):
         print(offset)
         # grab as many tracks as we can at once (100)
         for track in playlist_tracks:
-            # if 'is_playable' in track and not track['is_playable']:
-            #     print(track['track']['name'] + " is not playable")
-            #     continue
+            if 'is_playable' in track and not track['is_playable']:
+                 print(track['track']['name'] + " is not playable")
+                 continue
             if 'track' in track and track['track'] is not None and 'id' in track['track']:
                 track_ids.append(track['track']['id'])
         # we now grab ALL audio features for the 100 track IDs & append to the total audio features list
@@ -54,11 +54,12 @@ def calcScore(playlist_ID):
     total_acousticness = total_danceability = total_energy = total_loudness = total_speechiness = 0
 
     for feature in total_audio_features:
-        total_acousticness += feature['acousticness']
-        total_danceability += feature['danceability']
-        total_energy += feature['energy']
-        total_loudness += feature['loudness']
-        total_speechiness += feature['speechiness']
+        if feature is not None:
+            total_acousticness += feature['acousticness']
+            total_danceability += feature['danceability']
+            total_energy += feature['energy']
+            total_loudness += feature['loudness']
+            total_speechiness += feature['speechiness']
 
     avg_acousticness = total_acousticness / count
     avg_danceability = total_danceability / count
@@ -246,15 +247,20 @@ def handle_category_click():
         playlists = sp.category_playlists(category_id=category_id, limit=10)
         scores = getScore(playlists)
         time = findList(scores, score)  # Make sure score is converted to the correct type
+        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-    return jsonify({'scores': scores, 'time': time, 'user_score': score})
+    return return_percentages(time)
     # Process the category_id as needed
     # For example, you might look up the category by ID and do something with it
 
     # Then you can return a success response or further data as needed
-    return jsonify({"message": "Category ID received successfully", "categoryId": category_id}), 200
+@app.route('/answer', methods=['POST'])
+def return_percentages(time):
+    # Process the time, playlists, scores, and user_score variables as needed
+    # For example, you might calculate some percentages based on these variables
+    return jsonify({'time': time})
 ''' 
 '''
 # @app.route('/playlists')

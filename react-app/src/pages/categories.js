@@ -1,4 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { useState, useEffect } from "react"
+import ScaleLoader from "react-spinners/ScaleLoader";
 import '../index.css';
 
 
@@ -15,9 +19,10 @@ export const Categories = () => {
     { name: 'indie', id: '0JQ5DAqbMKFCWjUTdzaG0e' },
     { name: 'dance/electronic', id: '0JQ5DAqbMKFHOzuVTgTizF' }
   ];
-
-
+  const navigate = useNavigate();
   const handleClick = async (categoryId, categoryName) => {
+  
+    
     let score = localStorage.getItem('selectedPlaylistScore');
     score = parseFloat(score);
     console.log(`Category ${categoryName} with ID ${categoryId} clicked`);
@@ -45,20 +50,18 @@ export const Categories = () => {
       console.error('There was a problem with the fetch operation:', error);
     }
   };
-
-
   return (
     <div className="categories-container">
       <h1 className="categories-title">Categories to choose from:</h1>
       <div className="categories-list">
         {categories.map((category) => (
-          <button
+            <button
             key={category.id}
             className="category-button"
             onClick={() => handleClick(category.id, category.name)}
           >
             {category.name}
-          </button>
+          </button>  
         ))}
       </div>
     </div>
