@@ -1,10 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { useState, useEffect } from "react"
-import ScaleLoader from "react-spinners/ScaleLoader";
-import '../index.css';
-
+import { Link } from "react-router-dom";
 
 export const Categories = () => {
   const categories = [
@@ -20,13 +16,11 @@ export const Categories = () => {
     { name: 'dance/electronic', id: '0JQ5DAqbMKFHOzuVTgTizF' }
   ];
   const navigate = useNavigate();
-  const handleClick = async (categoryId, categoryName) => {
   
-    
+  const handleClick = async (categoryId, categoryName) => {
     let score = localStorage.getItem('selectedPlaylistScore');
     score = parseFloat(score);
     console.log(`Category ${categoryName} with ID ${categoryId} clicked`);
-
 
     // Replace '/your-flask-endpoint' with your actual Flask backend endpoint
     try {
@@ -38,32 +32,36 @@ export const Categories = () => {
         body: JSON.stringify({ categoryId, score }),
       });
 
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-
       const data = await response.json();
-      console.log(data); // You can handle the response data as needed
+      console.log(data); // This is the data you want to pass to the Answer page
+      navigate('/answer', { state: data }); // Navigating to the Answer page with data as state
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
   };
+
   return (
     <div className="categories-container">
       <h1 className="categories-title">Categories to choose from:</h1>
       <div className="categories-list">
         {categories.map((category) => (
-            <button
+          <button
             key={category.id}
             className="category-button"
             onClick={() => handleClick(category.id, category.name)}
           >
             {category.name}
-          </button>  
+          </button>
         ))}
       </div>
+      {/* Optional: Link to navigate directly to Answer page */}
+      <Link to="/answer">
+        <button className="button">AnswerPage</button>
+      </Link>
     </div>
   );
 };

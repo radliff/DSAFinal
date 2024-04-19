@@ -47,6 +47,7 @@ export const Home = () => {
             { <Link to="/categories">
                 <button className="button">Get Started</button>
             </Link> }
+            
         </div>
     );
 };

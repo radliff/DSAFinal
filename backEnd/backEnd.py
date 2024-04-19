@@ -162,15 +162,18 @@ def timed_merge_sort(arr):
 def findList(catScores, score):
     differences = []
     for playlist_score, playlist_name in catScores:
-        percentDiff = abs((playlist_score - score) / score) * 100
+        percentDiff = 100 - abs((playlist_score - score) / score) * 100
+        percentDiff = round(percentDiff, 2)
         differences.append((percentDiff, playlist_name))
     # use this to sort the main differences and access playlist name w/ it
     # differences = merge_sort(differences)
     # sort only percent differences & give times
     qTime = timed_quickSort([diff[0] for diff in differences])
     mTime = timed_merge_sort([diff[0] for diff in differences])
+    differences = merge_sort(differences)
+    differences = differences[::-1]
     # return the times and the differences, along with playlist name
-    return qTime, mTime, differences
+    return qTime, mTime, differences[:3]
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
 
 app.secret_key = 'secretSpotifyKey'
