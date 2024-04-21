@@ -23,8 +23,6 @@ def getScore(playlists):
 def calcScore(playlist_ID):
     # this is for calculating avg
     count = sp.playlist_tracks(playlist_id=playlist_ID)['total']
-    # defining all features
-    acousticness = danceability = energy = loudness = speechiness = 0
     limit = 100
     # playlist_tracks only grabs 100 tracks at a time, so we grab 1-100, 101-201, etc.
     offset = 0
@@ -50,9 +48,11 @@ def calcScore(playlist_ID):
         total_audio_features.extend(audio_features)
         # keep increasing the offset until it is equal to the total tracks
         offset += limit
-    # calculate averages for all features
-    total_acousticness = total_danceability = total_energy = total_loudness = total_speechiness = 0
 
+    # calculate averages for all features
+    total_acousticness = total_danceability = total_energy = total_loudness = total_speechiness = total_tempo = total_valence = total_instrumentalness = 0
+
+    # adding up all audio features
     for feature in total_audio_features:
         if feature is not None:
             total_acousticness += feature['acousticness']
@@ -60,24 +60,54 @@ def calcScore(playlist_ID):
             total_energy += feature['energy']
             total_loudness += feature['loudness']
             total_speechiness += feature['speechiness']
+            total_tempo += feature['tempo']
 
+    # added some weights to make categories "feel" more different
+    weights = {
+         'acousticness': 0.05,
+         'danceability': 0.1,
+         'energy': 0.1,
+         'instrumentalness': 0.05,
+         'loudness': 0.2,
+         'speechiness': 0.1,
+         'tempo': 0.3,
+         'valence': 0.1
+    }
+
+    # finding all averages for features
     avg_acousticness = total_acousticness / count
     avg_danceability = total_danceability / count
     avg_energy = total_energy / count
     avg_loudness = total_loudness / count
     avg_speechiness = total_speechiness / count
+    avg_tempo = total_tempo / count
+    avg_valence = total_valence / count
+    avg_instrumentalness = total_instrumentalness / count
 
+    # normalizing to 0-1
+    avg_tempo = (avg_tempo - 50) / 150
 
-    # scale loudness by -1
+    # normalizing to 0-1
     avg_loudness = (avg_loudness + 60) / 60
     # return the average of all features
-    score = (avg_acousticness + avg_energy + avg_danceability + avg_speechiness + avg_loudness) / 5.0
-    
-    score = (score * 100) + 1
+    score = (
+         (avg_acousticness * weights['acousticness']) + 
+         (avg_danceability * weights['danceability']) +
+         (avg_energy * weights['energy']) + 
+         (avg_loudness * weights['loudness']) +
+         (avg_speechiness * weights['speechiness']) +
+         (avg_tempo * weights['tempo']) +
+         (avg_valence * weights['valence']) +
+         (avg_instrumentalness * weights['instrumentalness'])
+    )
     # grabbing the playlist name
     playlist = sp.playlist(playlist_id=playlist_ID)
     playlist_name = playlist['name']
-    # playlist_name = 'playlist name'
+    
+    # multiplying by 100 to get percent differences
+    score *= 100
+
+    # returning score & playlist name
     return score, playlist_name
 # Brian's stuff
 # Function to find the partition position
@@ -152,6 +182,7 @@ def merge_sort(arr):
     left = merge_sort(arr[:mid]) # recuresive sorts the left hald
     right = merge_sort(arr[mid:]) # recursively sorts the right half!
     return merge(left, right) # sorts the left and right half
+
 def timed_merge_sort(arr):
     start_time = time.perf_counter()
     sorted_arr = merge_sort(arr)
@@ -159,21 +190,25 @@ def timed_merge_sort(arr):
     duration = end_time - start_time
     return round(duration, 7)
 
+# this function returns the sorted percent differences between the playlist & the category playlist score
 def findList(catScores, score):
     differences = []
     for playlist_score, playlist_name in catScores:
         percentDiff = 100 - abs((playlist_score - score) / score) * 100
         percentDiff = round(percentDiff, 2)
         differences.append((percentDiff, playlist_name))
-    # use this to sort the main differences and access playlist name w/ it
-    # differences = merge_sort(differences)
     # sort only percent differences & give times
     qTime = timed_quickSort([diff[0] for diff in differences])
     mTime = timed_merge_sort([diff[0] for diff in differences])
+
+    # we use this to sort the main differences list, the timed sort functions just return a time
     differences = merge_sort(differences)
     differences = differences[::-1]
+
     # return the times and the differences, along with playlist name
     return qTime, mTime, differences[:3]
+
+# setting the static folder to be in build
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
 
 app.secret_key = 'secretSpotifyKey'
@@ -222,72 +257,54 @@ def callback():
     SP_OAUTH.get_access_token(request.args['code'])
     return redirect(url_for('submitLink'))
 
+# submit playlist link
 @app.route('/submitLink')
 def submitLink():
     # returns page where we want user to submit link
     return app.send_static_file('index.html')
 
-
+# here is where we grab the playlist name
 @app.route('/playlist')
 def getPlaylistName():
     playlistID = request.args.get('id')
     playlist = sp.playlist(playlistID)
     playlist_name = playlist['name']
-    # Calculate score of given playlist
-    score = calcScore(playlistID)  # Ensure this function returns the score
+    # calculate score of given playlist
+    score = calcScore(playlistID)
     print(score)
     return jsonify({'name': playlist_name, 'score': score})
 
+# calculate all playlist scores for the selected category
 @app.route('/categories', methods=['POST'])
 def handle_category_click():
     data = request.get_json()
     if not data or 'categoryId' not in data or 'score' not in data:
         return jsonify({"error": "Missing data"}), 400
 
+    # grab category ID & playlist score
     category_id = data['categoryId']
     score = data['score']
+
+    # try-catch loop to get any possible errors from the fetch
     try:
         playlists = sp.category_playlists(category_id=category_id, limit=10)
+        # array of all playlist scores in category (10)
         scores = getScore(playlists)
-        time = findList(scores, score)  # Make sure score is converted to the correct type
+
+        # quicksort, mergesort, percent difference array (sorted)
+        time = findList(scores, score)
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
     return return_percentages(time)
-    # Process the category_id as needed
-    # For example, you might look up the category by ID and do something with it
 
-    # Then you can return a success response or further data as needed
+# return quick sort, merge sort, and top 3 playlists to answer page
 @app.route('/answer', methods=['POST'])
 def return_percentages(time):
-    # Process the time, playlists, scores, and user_score variables as needed
-    # For example, you might calculate some percentages based on these variables
+    
     return jsonify({'time': time})
-''' 
-'''
-# @app.route('/playlists')
-# def getPlaylists():
-#     # redirect to authorization url if token is not validated
-#     # if not SP_OAUTH.validate_token(CACHE_HANDLER.get_cached_token()):
-#     #     authUrl = SP_OAUTH.get_authorize_url()
-#     #     return redirect(authUrl)
-#     # playlistID = "4h0eEGBZevv0ZpSbmvP3qa"
-#     # playlist_tracks = sp.playlist_items(playlistID, additional_types='track')
 
-#     # trackFeatures = []
-#     # # iterates over every track in playlist & returns name
-#     # for track in playlist_tracks['items']:
-#     #     track_ID = track['track']['id']
-#     #     feature = sp.audio_features(track_ID)
-
-#     #     trackFeatures.append(feature)
-#     # print(trackFeatures)
-#     # return app.send_static_file('playlists.html')
-
-
-#     ''' I need a way to read the playlist ID from the URL, 
-#     that way, the user can just copy & paste'''
-
+# ensure we run on port 5000 - this is where react looks for the data
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
