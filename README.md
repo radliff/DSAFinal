@@ -1,6 +1,6 @@
 A little bit about HarmonyHub:
 
-This is a playlist compatibility finder for different categories in Spotify. We find scores for 10 different categories, and, based on how similar your playlist is to that score, we give you the top 3 playlists from that category. 
+This is a playlist compatibility finder for different categories in Spotify. We find scores for 10 different playlists in 10 different categories, and, based on how similar your playlist is to that score, we give you the top 3 playlists from that category. 
 We use the Spotify web API to collect data on different songs and use the data from these songs to drive the similarity scores. To sort these playlists, we decided to use both quick sort and merge sort and compared these times to see which one was typically faster.
 
 
