@@ -16,7 +16,7 @@ export const Answer = () => {
     useEffect(() => {
         setLoading(true); // Start loading state
 
-        // Check if data exists before fetching
+        // checks if data exists before fetching 
         if (data) {
             setQuicksortTime(data.time[0]);
             setMergeSortTime(data.time[1]);
@@ -34,9 +34,10 @@ export const Answer = () => {
                     if (!response.ok) throw new Error("Failed to fetch");
                     const jsonData = await response.json();
                     console.log(jsonData);
+                    // gets data from the json data and assigns it to its correct  variable
                     setMergeSortTime(jsonData.time[0]);
                     setQuicksortTime(jsonData.time[1]);
-                    setPlaylists(jsonData.time[2]); // Assuming this is the array of differences and names
+                    setPlaylists(jsonData.time[2]); 
                 } catch (error) {
                     console.error("Error fetching data: ", error);
                 } finally {

@@ -20,15 +20,6 @@ export const Home = () => {
         localStorage.setItem('accessToken', accessToken);
         navigate("/submitLink")
 
-        // Retrieve user's playlists after login
-        // axios.get('http://localhost:3000/playlists/37i9dQZF1DXcBWIGoYBM5M')
-        //     .then(response => {
-        //         console.log(response.data);
-        //         // Handle response data as needed
-        //     })
-        //     .catch(error => {
-        //         console.error('Error fetching playlists:', error);
-        //     });
     }
 
     return (
@@ -44,9 +35,6 @@ export const Home = () => {
             
             <button className="button-login" onClick={HandleLogin}>Login</button>
             
-            { <Link to="/categories">
-                <button className="button">Get Started</button>
-            </Link> }
             
         </div>
     );
@@ -55,5 +43,5 @@ export const Home = () => {
 export default Home;
 
 
-/* making a few changes */
+
 
