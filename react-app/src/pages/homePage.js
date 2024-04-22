@@ -15,8 +15,7 @@ export const Home = () => {
     const accessToken = urlParams.get('access_token');
 
     if (accessToken) {
-        // Store the access token securely (e.g., in a session or cookie)
-        // For demonstration purposes, storing in local storage here
+        // storing access token in local storage
         localStorage.setItem('accessToken', accessToken);
         navigate("/submitLink")
 
