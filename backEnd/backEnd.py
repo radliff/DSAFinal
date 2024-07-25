@@ -211,10 +211,10 @@ def findList(catScores, score):
 # setting the static folder to be in build
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
 
-app.secret_key = 'secretSpotifyKey'
+app.secret_key = SECRET_KEY
 
 CLIENT_ID = '247f9735be324d5b963621261d460aa3'
-CLIENT_SECRET = '73792a1a0c504291a13acbd19983018a'
+CLIENT_SECRET = CLIENT_SECRET_KEY
 
 # this is what callback redirects to
 REDIRECT_URI = 'http://localhost:5000/callback'
