@@ -1,22 +1,48 @@
-A little bit about HarmonyHub:
+# HarmonyHub
 
-This is a playlist compatibility finder for different categories in Spotify. We find scores for 10 different playlists in 10 different categories, and, based on how similar your playlist is to that score, we give you the top 3 playlists from that category. 
-We use the Spotify web API to collect data on different songs and use the data from these songs to drive the similarity scores. To sort these playlists, we decided to use both quick sort and merge sort and compared these times to see which one was typically faster.
+## Overview
 
+**HarmonyHub** is a playlist compatibility finder designed to enhance your Spotify experience. By analyzing your playlist and comparing it with curated playlists in 10 different categories, HarmonyHub identifies the top 3 playlists most similar to yours in each category. This tool leverages the Spotify Web API to gather data on individual tracks and uses this data to calculate similarity scores. To efficiently sort and rank these playlists, we've implemented both quick sort and merge sort algorithms, comparing their performance to determine the faster option.
 
-FRAMEWORKS:
-We used the Python library, flask, to serve the frontend which was created in React. We also used Spotipy to access the Spotify API and get the track information for each track from the playlist you pass in, as well as the category data.
+## Tech Stack
 
+- **Backend**: Flask, Python
+- **Frontend**: React, HTML, CSS
+- **API**: Spotipy (for accessing the Spotify API)
 
-RUNNING THE CODE LOCALLY:
-1. IMPORTANT: MUST run python backEnd/backEnd.py first in terminal to start server. This is how the website fetches the spotify requests from Flask.
-2. Cd to react-app, enter npm run build in your terminal.
-3. Enter npm start, this should route you to the website.
+## Running the Code Locally
 
-USING THE WEBSITE:
-1. Login with your spotify credentials.
-2. Enter the link from your playlist (This link MUST come from the spotify web app, otherwise you will get an error message saying the link is not real).
-3. Click the category that you want to compare your playlist to, and wait for the results to load.
+Follow these steps to run HarmonyHub on your local machine:
 
+1. **Start the Backend Server**
+   - Navigate to the `backEnd` directory.
+   - Run the backend server with the following command:
+     ```bash
+     python backEnd.py
+     ```
+   - This server handles Spotify requests via Flask.
 
-AUTHORS: Christopher Williams, Brian Mbaji, Radliff Jeantinor
+2. **Start the Frontend**
+   - Navigate to the `react-app` directory.
+   - Build the React app with:
+     ```bash
+     npm run build
+     ```
+   - Start the app with:
+     ```bash
+     npm start
+     ```
+   - Your browser should automatically open the website.
+
+## Using the Website
+
+1. **Login**: Log in with your Spotify credentials.
+2. **Input**: Paste the link to your playlist (ensure the link is from the Spotify web app to avoid errors).
+3. **Select Category**: Choose the category you want to compare your playlist with.
+4. **View Results**: Wait for the results to load, and see the top 3 playlists most similar to yours.
+
+## Authors
+
+- Christopher Williams
+- Brian Mbaji
+- Radliff Jeantinor
